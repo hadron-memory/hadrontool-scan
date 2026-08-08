@@ -84,6 +84,13 @@ describe('auth + surface', () => {
     const res = await request(app).post('/ops/scan').set(auth).send({}).expect(400);
     expect(res.body.error).toBe('validation_error');
   });
+
+  it('400s an unparseable or non-http url (contract: malformed input is 4xx)', async () => {
+    for (const url of ['not a url', 'file:///etc/passwd']) {
+      const res = await request(app).post('/ops/scan').set(auth).send({ url }).expect(400);
+      expect(res.body.error).toBe('validation_error');
+    }
+  });
 });
 
 describe('scan verdicts', () => {
